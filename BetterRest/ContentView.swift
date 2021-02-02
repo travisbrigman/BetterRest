@@ -22,37 +22,30 @@ struct ContentView: View {
         
         NavigationView {
             Form {
-                VStack(alignment: .leading, spacing: 0) {
-                    Text("When Do You Want To Wake Up?")
-                        .font(.headline)
+                Section(header:Text("When Do You Want To Wake Up?").font(.headline)) {
                     
                     DatePicker("please enter a time", selection: $wakeUp, displayedComponents: .hourAndMinute)
                         .labelsHidden()
                         .datePickerStyle(WheelDatePickerStyle())
                 }
                 
-                VStack(alignment: .leading, spacing: 0) {
-                    Text("Desired Amount of Sleep")
-                        .font(.headline)
-                    Stepper(value: $sleepAmount, in: 4...12, step: 0.25) {
-                        Text("\(sleepAmount, specifier: "%g") hours")
-                    }
+                Section(header: Text("Desired Amount of Sleep")
+                    .font(.headline)) {
+                        
+                        Stepper(value: $sleepAmount, in: 4...12, step: 0.25) {
+                            Text("\(sleepAmount, specifier: "%g") hours")
+                        }
                 }
                 
-                VStack(alignment: .leading, spacing: 0) {
-                    
-                    
-                    Text("Daily Coffee Intake")
-                        .font(.headline)
-                    Stepper(value: $coffeeAmount, in: 1...20) {
-                        if coffeeAmount == 1 {
-                            Text("1 Cup")
-                        } else {
-                            Text("\(coffeeAmount) Cups")
+                Section(header: Text("Daily Coffee Intake")
+                    .font(.headline)) {
+                        Picker("Coffe Cups",selection: $coffeeAmount) {
+                            ForEach(1..<21, id: \.self){i in
+                                Text("\(i)")
+                            }
                         }
                     }
                 }
-            }
             .navigationBarTitle("BetterRest")
             .navigationBarItems(trailing: Button(action: calculateBedTime){
                 Text("Calculate")
