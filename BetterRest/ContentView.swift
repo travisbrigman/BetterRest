@@ -16,7 +16,6 @@ struct ContentView: View {
     //alert variables
     @State private var alertTitle = ""
     @State private var alertMessage = ""
-    @State private var showingAlert = false
     
     var body: some View {
         
@@ -44,18 +43,17 @@ struct ContentView: View {
                                 Text("\(i)")
                             }
                         }
-                    }
                 }
-            .navigationBarTitle("BetterRest")
-            .navigationBarItems(trailing: Button(action: calculateBedTime){
-                Text("Calculate")
+                Section(header: Text("your recommended bed time:").font(.headline)){
+                Text(calculateBedTime)
+                    .font(.largeTitle)
                 }
-            )
-                .alert(isPresented: $showingAlert){
-                    Alert(title: Text(alertTitle), message: Text(alertMessage), dismissButton: .default(Text("Ok")))
             }
+            .navigationBarTitle("BetterRest")
         }
     }
+    
+
     
     static var defaultWakeTime: Date {
         var components = DateComponents()
@@ -63,11 +61,12 @@ struct ContentView: View {
         components.minute = 0
         return Calendar.current.date(from: components) ?? Date()
     }
-    func calculateBedTime() {
+    var calculateBedTime: String {
         let model = SleepCalculator()
         let components = Calendar.current.dateComponents([.hour, .minute], from: wakeUp)
         let hour = (components.hour ?? 0) * 60 * 60
         let minute = (components.minute ?? 0) * 60
+        var bedTimeMessage = ""
         
         do{
             let prediction = try
@@ -76,13 +75,14 @@ struct ContentView: View {
             let sleepTime = wakeUp - prediction.actualSleep
             let formatter = DateFormatter()
             formatter.timeStyle = .short
-            alertMessage = formatter.string(from: sleepTime)
+            bedTimeMessage = formatter.string(from: sleepTime)
             alertTitle = "Your Bedtime Is:"
         } catch {
             alertTitle = "Error"
-            alertMessage = "There was a problem calculating your bed time"
+            bedTimeMessage = "There was a problem calculating your bed time"
         }
-        showingAlert = true
+        return bedTimeMessage
+        
     }
 }
 
